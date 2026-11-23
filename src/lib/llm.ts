@@ -18,6 +18,8 @@ export async function askJson<T>(
       body: JSON.stringify({
         model: process.env.GROQ_MODEL,
         response_format: { type: "json_object" },
+        reasoning_effort: "low",
+        max_completion_tokens: 4000,
         messages: [
           { role: "system", content: `${system} Responde solo con JSON.` },
           { role: "user", content: prompt },
@@ -30,11 +32,21 @@ export async function askJson<T>(
       return schema.parse(JSON.parse(data.choices[0].message.content));
     }
 
-    const err = new Error(`Groq ${res.status}: ${(await res.text()).slice(0, 200)}`) as Error & { status?: number };
+    const text = await res.text();
+    const err = new Error(`Groq ${res.status}: ${text.slice(0, 200)}`) as Error & { status?: number };
     err.status = res.status;
     lastError = err;
-    if (![429, 500, 503].includes(res.status)) throw err;
-    await sleep(1000 * 2 ** attempt);
+    const retryable =
+      [429, 500, 503].includes(res.status) ||
+      (res.status === 400 && text.includes("json_validate_failed"));
+    if (!retryable) throw err;
+
+    const retryAfter = Number(res.headers.get("retry-after"));
+    const waitMs =
+      res.status === 429
+        ? Math.min(Math.max(retryAfter || 5, 3), 15) * 1000
+        : 1000 * 2 ** attempt;
+    await sleep(waitMs);
   }
   throw lastError;
 }

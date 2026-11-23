@@ -28,6 +28,7 @@ Reglas:
 - Si usas estado o eventos (useState, onSubmit, onClick), el archivo debe empezar con "use client";.
 - Enlaces con next/link. Estilos con clases de Tailwind. Textos visibles en español.
 - Si recibes fallos de una revisión anterior, corrígelos todos.
+- El layout (src/app/layout.tsx) ya incluye NavBar en todas las páginas: no importes NavBar dentro de las páginas.
 Formato exacto: {"summary":"...","files":[{"path":"...","content":"..."}]}`;
 
 export async function latestFiles(runId: string) {
@@ -82,15 +83,20 @@ export async function runDevelopTask(taskId: string) {
       .set({ status: "en_revision", updatedAt: new Date() })
       .where(eq(tasks.id, taskId));
     await log(task.runId, taskId, `Tarea entregada: ${out.summary}`);
-  } catch (e) {
+    } catch (e) {
+    // Error técnico (límite de cuota, JSON inválido...): no cuenta como intento
     await db
       .update(tasks)
-      .set({ status: "fallida", updatedAt: new Date() })
+      .set({
+        status: task.feedback ? "fallida" : "pendiente",
+        attempt: task.attempt,
+        updatedAt: new Date(),
+      })
       .where(eq(tasks.id, taskId));
     await log(
       task.runId,
       taskId,
-      `Error en la tarea: ${String((e as Error).message).slice(0, 200)}`
+      `Error técnico (no cuenta como intento): ${String((e as Error).message).slice(0, 200)}`
     );
     throw e;
   }

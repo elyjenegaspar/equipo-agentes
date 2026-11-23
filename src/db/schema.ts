@@ -17,6 +17,7 @@ export const tasks = pgTable("tasks", {
   attempt: integer("attempt").notNull().default(0),
   position: integer("position").notNull().default(0),
   feedback: text("feedback"),
+  checks: text("checks"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
