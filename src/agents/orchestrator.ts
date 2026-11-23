@@ -53,6 +53,7 @@ const SYSTEM = `Eres el Orquestador de un equipo de 2 agentes:
 - "testing": comprueba el trabajo de develop y reporta lo que falla.
 La web objetivo es un sitio Next.js (App Router, TypeScript) que ya contiene exactamente estos archivos: src/app/layout.tsx, src/app/page.tsx y src/components/NavBar.tsx.
 Las tareas deben crear o modificar solo archivos con rutas de este estilo: src/app/<ruta>/page.tsx y src/components/<Nombre>.tsx. No uses react-router, ni src/pages, ni App.tsx, ni CSS modules: usa clases de Tailwind.
+Usa rutas y textos visibles en español (por ejemplo la ruta /contacto, el título "Contacto", el botón "Enviar").
 Divide la petición en entre 2 y 6 tareas, en el orden en que deben hacerse.
 Las tareas de develop van primero y la última tarea siempre es de testing y verifica el resultado completo.
 Cada descripción debe ser concreta y comprobable (qué archivo, qué elementos, qué debe cumplir).

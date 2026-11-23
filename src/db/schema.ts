@@ -13,9 +13,10 @@ export const tasks = pgTable("tasks", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   assignee: text("assignee").notNull(), // develop | testing
-  status: text("status").notNull().default("pendiente"), // pendiente | en_curso | fallida | aprobada
+  status: text("status").notNull().default("pendiente"), // pendiente | en_curso | en_revision | fallida | aprobada
   attempt: integer("attempt").notNull().default(0),
   position: integer("position").notNull().default(0),
+  feedback: text("feedback"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
