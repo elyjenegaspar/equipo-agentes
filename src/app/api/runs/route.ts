@@ -1,9 +1,14 @@
+import { isAuthed } from "@/lib/auth";
 import { z } from "zod";
 import { createRun } from "@/agents/orchestrator";
+
 
 const bodySchema = z.object({ request: z.string().min(5).max(500) });
 
 export async function POST(req: Request) {
+	if (!(await isAuthed())) {
+		return Response.json({ error: "No autorizado" }, { status: 401 });
+	}
   const parsed = bodySchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {
     return Response.json({ error: "Petición no válida" }, { status: 400 });

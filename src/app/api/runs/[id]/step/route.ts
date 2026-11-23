@@ -1,3 +1,4 @@
+import { isAuthed } from "@/lib/auth";
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { runs, tasks } from "@/db/schema";
@@ -10,6 +11,11 @@ export async function POST(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+	
+	if (!(await isAuthed())) {
+		return Response.json({ error: "No autorizado" }, { status: 401 });
+	}
+	
   const { id } = await params;
 
   const [run] = await db.select().from(runs).where(eq(runs.id, id));
