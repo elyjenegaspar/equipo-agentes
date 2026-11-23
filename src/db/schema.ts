@@ -15,6 +15,7 @@ export const tasks = pgTable("tasks", {
   assignee: text("assignee").notNull(), // develop | testing
   status: text("status").notNull().default("pendiente"), // pendiente | en_curso | fallida | aprobada
   attempt: integer("attempt").notNull().default(0),
+  position: integer("position").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
